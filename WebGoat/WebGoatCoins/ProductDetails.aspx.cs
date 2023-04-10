@@ -22,7 +22,6 @@ namespace OWASP.WebGoat.NET.WebGoatCoins
             if (!Page.IsPostBack)
                 LoadComments();
 
-            //TODO: broken 
             if (!Page.IsPostBack) 
             {
                 
@@ -53,7 +52,7 @@ namespace OWASP.WebGoat.NET.WebGoatCoins
         void LoadComments()
         {
             string id = Request["productNumber"];
-            if (id == null) id = "S18_2795"; //this month's special    
+            if (id == null) id = "S18_2795";
             DataSet ds = du.GetProductDetails(id);
             string output = string.Empty;
             string comments = string.Empty;
@@ -83,7 +82,6 @@ namespace OWASP.WebGoat.NET.WebGoatCoins
             lblComments.Text = comments;
 
 
-            //Fill in the email address of authenticated users
             if (Request.Cookies["customerNumber"] != null)
             {
                 string customerNumber = Request.Cookies["customerNumber"].Value;

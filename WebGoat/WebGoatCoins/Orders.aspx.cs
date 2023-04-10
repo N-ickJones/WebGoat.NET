@@ -27,7 +27,7 @@ namespace OWASP.WebGoat.NET.WebGoatCoins
             {
                 ds = du.GetOrders(id);
 
-                if (!Page.IsPostBack) //generate the data grid
+                if (!Page.IsPostBack)
                 {
                     GridView1.DataSource = ds.Tables[0];
 
@@ -58,33 +58,27 @@ namespace OWASP.WebGoat.NET.WebGoatCoins
 
                     GridView1.DataBind();
                 }
-                //check if orderNumber exists
                 string orderNumber = Request["orderNumber"];
                 if (orderNumber != null)
                 {
                     try
                     {
-                        //lblOutput.Text = orderNumber;
                         DataSet dsOrderDetails = du.GetOrderDetails(int.Parse(orderNumber));
                         DetailsView1.DataSource = dsOrderDetails.Tables[0];
                         DetailsView1.DataBind();
-                        //litOrderDetails.Visible = true;
                         PanelShowDetailSuccess.Visible = true;
 
-                        //allow customer to download image of their product
                         string image = dsOrderDetails.Tables[0].Rows[0]["productImage"].ToString();
                         HyperLink1.Text = "Download Product Image";
                         HyperLink1.NavigateUrl = Request.RawUrl + "&image=images/products/" + image;
                     }
                     catch (Exception ex)
                     {
-                        //litOrderDetails.Text = "Error finding order number " + orderNumber + ". Details: " + ex.Message;
                         PanelShowDetailFailure.Visible = true;
                         litErrorDetailMessage.Text = "Error finding order number " + orderNumber + ". Details: " + ex.Message;
                     }
                 }
 
-                //check if they are trying to download the image
                 string target_image = Request["image"];
                 if (target_image != null)
                 {
@@ -107,7 +101,6 @@ namespace OWASP.WebGoat.NET.WebGoatCoins
 
         protected void GridView1_RowDataBound(object sender, GridViewRowEventArgs e)
         {
-            //make the first column a hyperlink
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
                 HyperLink link = new HyperLink();

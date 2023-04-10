@@ -11,10 +11,6 @@ namespace OWASP.WebGoat.NET
 {
     public partial class MainPage : System.Web.UI.Page
     {
-        //TODO: Add "welcome back " + name;
-        //TODO: pending orders?
-        //TODO: Add "WebGoat Coins Info Center"
-        //TODO: Take out monthly special, add "hear what our customers are saying" - with the latest comments.  Add date field to comments??
 
 
         private IDbProvider du = Settings.CurrentDbProvider;
@@ -27,7 +23,7 @@ namespace OWASP.WebGoat.NET
                 string customerNumber = Request.Cookies["customerNumber"].Value;
 
                 DataSet ds = du.GetCustomerDetails(customerNumber);
-                DataRow row = ds.Tables[0].Rows[0]; //customer row
+                DataRow row = ds.Tables[0].Rows[0];
 
                 Image1.ImageUrl = "images/logos/" + row["logoFileName"];
 

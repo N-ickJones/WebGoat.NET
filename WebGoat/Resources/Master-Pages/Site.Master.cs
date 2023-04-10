@@ -26,7 +26,6 @@ namespace OWASP.WebGoat.NET.resources.Master_Pages
         {
             foreach (RepeaterItem item in rptrMenu.Items)
             {
-                //nothing
             }
         }
     }

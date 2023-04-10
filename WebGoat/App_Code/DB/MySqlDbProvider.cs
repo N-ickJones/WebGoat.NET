@@ -59,13 +59,6 @@ namespace OWASP.WebGoat.NET.App_Code.DB
         {
             try
             {
-                /*using (MySqlConnection connection = new MySqlConnection(_connectionString))
-                {
-                    connection.Open();
-                    MySqlCommand cmd = new MySqlCommand("select * from information_schema.TABLES", connection);
-                    cmd.ExecuteNonQuery();
-                    connection.Close();
-                }*/
                 MySqlHelper.ExecuteNonQuery(_connectionString, "select * from information_schema.TABLES");
                 
                 return true;
@@ -111,10 +104,8 @@ namespace OWASP.WebGoat.NET.App_Code.DB
 
         public bool IsValidCustomerLogin(string email, string password)
         {
-            //encode password
             string encoded_password = Encoder.Encode(password);
             
-            //check email/password
             string sql = "select * from CustomerLogin where email = '" + email + 
                 "' and password = '" + encoded_password + "';";
                         
@@ -122,7 +113,6 @@ namespace OWASP.WebGoat.NET.App_Code.DB
             {
                 MySqlDataAdapter da = new MySqlDataAdapter(sql, connection);
             
-                //TODO: User reader instead (for all calls)
                 DataSet ds = new DataSet();
             
                 da.Fill(ds);
@@ -134,7 +124,6 @@ namespace OWASP.WebGoat.NET.App_Code.DB
                 }
                 catch (Exception ex)
                 {
-                    //Log this and pass the ball along.
                     log.Error("Error checking login", ex);
                     
                     throw new Exception("Error checking login", ex);
@@ -142,13 +131,11 @@ namespace OWASP.WebGoat.NET.App_Code.DB
             }
         }
         
-        //Find the bugs!
         public string CustomCustomerLogin(string email, string password)
         {
             string error_message = null;
             try
             {
-                //get data
                 string sql = "select * from CustomerLogin where email = '" + email + "';";
                 
                 using (MySqlConnection connection = new MySqlConnection(_connectionString))
@@ -157,7 +144,6 @@ namespace OWASP.WebGoat.NET.App_Code.DB
                     DataSet ds = new DataSet();
                     da.Fill(ds);
 
-                    //check if email address exists
                     if (ds.Tables[0].Rows.Count == 0)
                     {
                         error_message = "Email Address Not Found!";
@@ -173,7 +159,6 @@ namespace OWASP.WebGoat.NET.App_Code.DB
                     }
                     else
                     {
-                        //login successful
                         error_message = null;
                     }
                 }
@@ -350,13 +335,11 @@ namespace OWASP.WebGoat.NET.App_Code.DB
             
                 using (MySqlConnection connection = new MySqlConnection(_connectionString))
                 {
-                    //get data
                     string sql = "select * from CustomerLogin where email = '" + email + "';";
                     MySqlDataAdapter da = new MySqlDataAdapter(sql, connection);
                     DataSet ds = new DataSet();
                     da.Fill(ds);
 
-                    //check if email address exists
                     if (ds.Tables[0].Rows.Count == 0)
                     {
                         result = "Email Address Not Found!";
@@ -421,8 +404,8 @@ namespace OWASP.WebGoat.NET.App_Code.DB
                 da.Fill(ds, "comments");
 
                 DataRelation dr = new DataRelation("prod_comments",
-                ds.Tables["products"].Columns["productCode"], //category table
-                ds.Tables["comments"].Columns["productCode"], //product table
+                ds.Tables["products"].Columns["productCode"],
+                ds.Tables["comments"].Columns["productCode"],
                 false);
 
                 ds.Relations.Add(dr);
@@ -478,12 +461,10 @@ namespace OWASP.WebGoat.NET.App_Code.DB
 
         public DataSet GetProductsAndCategories(int catNumber)
         {
-            //TODO: Rerun the database script.
             string sql = string.Empty;
             MySqlDataAdapter da;
             DataSet ds = new DataSet();
 
-            //catNumber is optional.  If it is greater than 0, add the clause to both statements.
             string catClause = string.Empty;
             if (catNumber >= 1)
                 catClause += " where catNumber = " + catNumber; 
@@ -501,10 +482,9 @@ namespace OWASP.WebGoat.NET.App_Code.DB
                 da.Fill(ds, "products");
 
 
-                //category / products relationship
                 DataRelation dr = new DataRelation("cat_prods", 
-                ds.Tables["categories"].Columns["catNumber"], //category table
-                ds.Tables["products"].Columns["catNumber"], //product table
+                ds.Tables["categories"].Columns["catNumber"],
+                ds.Tables["products"].Columns["catNumber"],
                 false);
 
                 ds.Relations.Add(dr);
@@ -537,12 +517,6 @@ namespace OWASP.WebGoat.NET.App_Code.DB
             {
             
                 output = (String)MySqlHelper.ExecuteScalar(_connectionString, "select email from CustomerLogin where customerNumber = " + num);
-                /*using (MySqlConnection connection = new MySqlConnection(_connectionString))
-                {
-                    string sql = "select email from CustomerLogin where customerNumber = " + num;
-                    MySqlCommand cmd = new MySqlCommand(sql, connection);
-                    output = (string)cmd.ExecuteScalar();
-                }*/
                 
             }
             catch (Exception ex)

@@ -19,10 +19,8 @@ namespace OWASP.WebGoat.NET
 		private SqliteConnection GetGoatDBConnection ()
 		{
 			if (conn == null) {
-				//set the physical path to the SQLite database
 				string connectionstring = "Data Source=" + GoatDBFile;
 				
-				//create the connection
 				conn = new SqliteConnection (connectionstring);
 				conn.Open ();
 			}
@@ -38,7 +36,6 @@ namespace OWASP.WebGoat.NET
 			SqliteConnection cn = GetGoatDBConnection ();
 			CreateTables (cn);
 			AddDataToTables (cn);
-			//create the tables
 			cn.Close ();
 			return true;			
 		}
@@ -104,50 +101,14 @@ namespace OWASP.WebGoat.NET
 			}
 			return output;
 		}
-		/*
-		private DataTable DoQuery (string SQL)
-		{			
-			string GoatDBFile = "URI=file:" + HttpContext.Current.Server.MapPath ("~/App_Data/") + "goatdb.sqlite";
-			var cn = new System.Data.SQLite.SQLiteConnection (GoatDBFile);
-			cn.Open ();
-			
-			var da = new System.Data.SQLite.SQLiteDataAdapter (SQL, cn);
-			var dt = new DataTable ();
-			da.Fill (dt);
-			cn.Close ();
-			return dt;
-		}
-		*/
 		
 		
-		//this SQLite provider does not support datatables, so dumping query contents into a string
-		//TODO change this so there is no formatting
-		//TODO send back as an array or a dictionary or something
-		//TODO Do formatting in the page itself
-		/*
-		private string DoQuery (string SQL, SqliteConnection conn)
-		{
-			string result = string.Empty;
-			var cmd = new SqliteCommand (SQL, conn);
-			using (var reader = cmd.ExecuteReader ()) {
-				while (reader.Read ()) {
-					for (int i = 0; i < reader.FieldCount; ++i) {
-						result += "<b>" + reader.GetName (i) + "</b>: " + reader [i] + "<br/>";
-					}
-					result += "<p/>";
-				}
-			}
-			
-			return result;
-		}
-		*/
 		private DataTable DoQuery (string SQL, SqliteConnection conn)
 		{
 			var cmd = new SqliteCommand (SQL, conn);
 			DataTable dt = new DataTable ();
 			using (var reader = cmd.ExecuteReader ()) {
 				
-				// Add all the columns.
 				for (int i = 0; i < reader.FieldCount; i++) {
 					DataColumn col = new DataColumn ();
 					col.DataType = reader.GetFieldType (i);
@@ -159,7 +120,6 @@ namespace OWASP.WebGoat.NET
 				while (reader.Read()) {
 					DataRow row = dt.NewRow ();
 					for (int i = 0; i < reader.FieldCount; i++) {
-						// Ignore Null fields.
 						if (reader.IsDBNull (i))
 							continue;
 

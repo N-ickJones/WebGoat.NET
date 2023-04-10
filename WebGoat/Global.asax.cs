@@ -39,8 +39,6 @@ namespace OWASP.WebGoat.NET
 
         protected void Application_AuthenticateRequest(object sender, EventArgs e)
         {
-            //get the role data out of the encrypted cookie and add to current context
-            //TODO: get this out of a different cookie
 
             if (HttpContext.Current.User != null)
             {
@@ -52,7 +50,6 @@ namespace OWASP.WebGoat.NET
                             (FormsIdentity)HttpContext.Current.User.Identity;
                         FormsAuthenticationTicket ticket = id.Ticket;
 
-                        // Get the stored user-data, in this case, our roles
                         string userData = ticket.UserData;
                         string[] roles = userData.Split(',');
                         HttpContext.Current.User = new GenericPrincipal(id, roles);

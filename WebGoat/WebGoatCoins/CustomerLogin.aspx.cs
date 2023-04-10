@@ -41,24 +41,21 @@ namespace OWASP.WebGoat.NET.WebGoatCoins
                 PanelError.Visible = true;
                 return;
             }
-            // put ticket into the cookie
             FormsAuthenticationTicket ticket =
                         new FormsAuthenticationTicket(
-                            1, //version 
-                            email, //name 
-                            DateTime.Now, //issueDate
-                            DateTime.Now.AddDays(14), //expireDate 
-                            true, //isPersistent
-                            "customer", //userData (customer role)
-                            FormsAuthentication.FormsCookiePath //cookiePath
+                            1,
+                            email,
+                            DateTime.Now,
+                            DateTime.Now.AddDays(14),
+                            true,
+                            "customer",
+                            FormsAuthentication.FormsCookiePath
             );
 
-            string encrypted_ticket = FormsAuthentication.Encrypt(ticket); //encrypt the ticket
+            string encrypted_ticket = FormsAuthentication.Encrypt(ticket);
 
-            // put ticket into the cookie
             HttpCookie cookie = new HttpCookie(FormsAuthentication.FormsCookieName, encrypted_ticket);
 
-            //set expiration date
             if (ticket.IsPersistent)
                 cookie.Expires = ticket.Expiration;
                 

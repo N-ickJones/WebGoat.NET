@@ -18,7 +18,7 @@ namespace OWASP.WebGoat.NET.App_Code
             if (min >= max)
                 throw new Exception("Min must be smaller than max");
                 
-            unchecked //Just use next number from overflow
+            unchecked
             {
                 _seed = _seed * _seed + _seed;
             }
@@ -31,7 +31,7 @@ namespace OWASP.WebGoat.NET.App_Code
             if (min >= max)
                 throw new Exception("Min must be smaller than max");
 
-            unchecked //Just use next number from overflow
+            unchecked
             {
                 var seed = _seed * _seed + _seed;
 

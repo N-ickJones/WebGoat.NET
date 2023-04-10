@@ -30,10 +30,6 @@ namespace OWASP.WebGoat.NET
 
         protected void btnGO_Click(object sender, EventArgs e)
         {
-            //url encoded
-            //base64
-            //sha1
-            //encryption with password
             
             string secret = txtString.Text;
             string key = String.IsNullOrEmpty(txtPassword.Text) ? hardCodedKey : txtPassword.Text;
@@ -118,7 +114,6 @@ namespace OWASP.WebGoat.NET
         private string CustomCryptoEncrypt(String s)
         {
             byte[] bytes = Encoding.UTF8.GetBytes(s);
-            // needs work but you get the point
             for (int i = 0; i < bytes.Length; i++)
             {
                 if (i % 2 == 0)

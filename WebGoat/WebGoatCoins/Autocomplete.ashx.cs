@@ -8,9 +8,6 @@ using OWASP.WebGoat.NET.App_Code.DB;
 
 namespace OWASP.WebGoat.NET.WebGoatCoins
 {
-    /// <summary>
-    /// Summary description for Autocomplete
-    /// </summary>
     public class Autocomplete : IHttpHandler
     {
     
@@ -19,8 +16,6 @@ namespace OWASP.WebGoat.NET.WebGoatCoins
 
         public void ProcessRequest(HttpContext context)
         {
-            //context.Response.ContentType = "text/plain";
-            //context.Response.Write("Hello World");
 
             string query = context.Request["query"];
             

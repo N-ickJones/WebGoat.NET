@@ -14,9 +14,6 @@ using System.Xml.Serialization;
 
 namespace TechInfoSystems.Data.SQLite
 {
-	/// <summary>
-	/// Provides a Profile implementation whose data is stored in a SQLite database.
-	/// </summary>
 	public sealed class SQLiteProfileProvider : ProfileProvider
 	{
 		#region Private Fields
@@ -36,13 +33,6 @@ namespace TechInfoSystems.Data.SQLite
 
 		#region Public Properties
 
-		/// <summary>
-		/// Gets or sets the name of the currently running application.
-		/// </summary>
-		/// <value></value>
-		/// <returns>
-		/// A <see cref="T:System.String"/> that contains the application's shortened name, which does not contain a full path or extension, for example, SimpleAppSettings.
-		/// </returns>
 		public override string ApplicationName {
 			get { return _applicationName; }
 			set {
@@ -54,13 +44,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Gets or sets the name of the application used by the Membership provider.
-		/// </summary>
-		/// <value></value>
-		/// <returns>
-		/// The name of the application used by the Membership provider.
-		/// </returns>
 		public static string MembershipApplicationName {
 			get { return _membershipApplicationName; }
 			set {
@@ -76,20 +59,6 @@ namespace TechInfoSystems.Data.SQLite
 
 		#region Public Methods
 
-		/// <summary>
-		/// Initializes the provider.
-		/// </summary>
-		/// <param name="name">The friendly name of the provider.</param>
-		/// <param name="config">A collection of the name/value pairs representing the provider-specific attributes specified in the configuration for this provider.</param>
-		/// <exception cref="T:System.ArgumentNullException">
-		/// The name of the provider is null.
-		/// </exception>
-		/// <exception cref="T:System.ArgumentException">
-		/// The name of the provider has a length of zero.
-		/// </exception>
-		/// <exception cref="T:System.InvalidOperationException">
-		/// An attempt is made to call <see cref="M:System.Configuration.Provider.ProviderBase.Initialize(System.String,System.Collections.Specialized.NameValueCollection)"/> on a provider after the provider has already been initialized.
-		/// </exception>
 		public override void Initialize (string name, NameValueCollection config)
 		{
 			if (config == null)
@@ -106,7 +75,6 @@ namespace TechInfoSystems.Data.SQLite
 
 			base.Initialize (name, config);
 
-			// Initialize SqliteConnection.
 			ConnectionStringSettings connectionStringSettings = ConfigurationManager.ConnectionStrings [config ["connectionStringName"]];
 
 			if (connectionStringSettings == null || String.IsNullOrEmpty (connectionStringSettings.ConnectionString)) {
@@ -126,7 +94,6 @@ namespace TechInfoSystems.Data.SQLite
 				MembershipApplicationName = config ["membershipApplicationName"];
 			}
 
-			// Check for invalid parameters in the config
 			config.Remove ("connectionStringName");
 			config.Remove ("applicationName");
 			config.Remove ("membershipApplicationName");
@@ -137,16 +104,9 @@ namespace TechInfoSystems.Data.SQLite
 					throw new ProviderException ("Unrecognized attribute: " + attribUnrecognized);
 			}
 
-			// Verify a record exists in the application table.
 			VerifyApplication ();
 		}
 
-		/// <summary>
-		/// Retrieves profile property information and values from a SQL Server profile database.
-		/// </summary>
-		/// <param name="sc">The <see cref="SettingsContext" /> that contains user profile information. </param>
-		/// <param name="properties">A <see cref="SettingsPropertyCollection" /> containing profile information for the properties to be retrieved.</param>
-		/// <returns>A <see cref="SettingsPropertyValueCollection" /> containing profile property information and values.</returns>
 		public override SettingsPropertyValueCollection GetPropertyValues (SettingsContext sc, SettingsPropertyCollection properties)
 		{
 			SettingsPropertyValueCollection svc = new SettingsPropertyValueCollection ();
@@ -170,12 +130,6 @@ namespace TechInfoSystems.Data.SQLite
 			return svc;
 		}
 
-		/// <summary>
-		/// Updates the SQLite profile database with the specified property values. 
-		/// </summary>
-		/// <param name="sc">The <see cref="SettingsContext" /> that contains user profile information. </param>
-		/// <param name="properties">A <see cref="SettingsPropertyValueCollection" /> containing profile information and 
-		/// values for the properties to be updated. </param>
 		public override void SetPropertyValues (SettingsContext sc, SettingsPropertyValueCollection properties)
 		{
 			string username = (string)sc ["UserName"];
@@ -210,10 +164,9 @@ namespace TechInfoSystems.Data.SQLite
 					string userId = cmd.ExecuteScalar () as string;
 
 					if ((userId == null) && (userIsAuthenticated))
-						return; // User is logged on but no record exists in user table. This should never happen, but if it doesn, just exit.
+						return;
 
 					if (userId == null) {
-						// User is anonymous and no record exists in user table. Add it.
 						userId = Guid.NewGuid ().ToString ();
 
 						CreateAnonymousUser (username, cn, tran, userId);
@@ -237,7 +190,6 @@ namespace TechInfoSystems.Data.SQLite
 
 					cmd.ExecuteNonQuery ();
 
-					// Update activity field
 					cmd.CommandText = "UPDATE " + USER_TB_NAME + " SET LastActivityDate = $LastActivityDate WHERE UserId = $UserId";
 					cmd.Parameters.Clear ();
 					cmd.Parameters.AddWithValue ("$LastActivityDate", DateTime.UtcNow);
@@ -265,13 +217,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Deletes profile properties and information for the supplied list of profiles.
-		/// </summary>
-		/// <param name="profiles">A <see cref="T:System.Web.Profile.ProfileInfoCollection"/>  of information about profiles that are to be deleted.</param>
-		/// <returns>
-		/// The number of profiles deleted from the data source.
-		/// </returns>
 		public override int DeleteProfiles (ProfileInfoCollection profiles)
 		{
 			if (profiles == null)
@@ -295,7 +240,6 @@ namespace TechInfoSystems.Data.SQLite
 						numDeleted++;
 				}
 
-				// Commit the transaction if it's the one we created in this method.
 				if (tran != null)
 					tran.Commit ();
 			} catch {
@@ -318,13 +262,6 @@ namespace TechInfoSystems.Data.SQLite
 			return numDeleted;
 		}
 
-		/// <summary>
-		/// When overridden in a derived class, deletes profile properties and information for profiles that match the supplied list of user names.
-		/// </summary>
-		/// <param name="usernames">A string array of user names for profiles to be deleted.</param>
-		/// <returns>
-		/// The number of profiles deleted from the data source.
-		/// </returns>
 		public override int DeleteProfiles (string[] usernames)
 		{
 			int numDeleted = 0;
@@ -342,7 +279,6 @@ namespace TechInfoSystems.Data.SQLite
 						numDeleted++;
 				}
 
-				// Commit the transaction if it's the one we created in this method.
 				if (tran != null)
 					tran.Commit ();
 			} catch {
@@ -365,14 +301,6 @@ namespace TechInfoSystems.Data.SQLite
 			return numDeleted;
 		}
 
-		/// <summary>
-		/// Deletes all user-profile data for profiles in which the last activity date occurred before the specified date.
-		/// </summary>
-		/// <param name="authenticationOption">One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption"/> values, specifying whether anonymous, authenticated, or both types of profiles are deleted.</param>
-		/// <param name="userInactiveSinceDate">A <see cref="T:System.DateTime"/> that identifies which user profiles are considered inactive. If the <see cref="P:System.Web.Profile.ProfileInfo.LastActivityDate"/>  value of a user profile occurs on or before this date and time, the profile is considered inactive.</param>
-		/// <returns>
-		/// The number of profiles deleted from the data source.
-		/// </returns>
 		public override int DeleteInactiveProfiles (ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate)
 		{
 			SqliteConnection cn = GetDbConnectionForProfile ();
@@ -396,14 +324,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Returns the number of profiles in which the last activity date occurred on or before the specified date.
-		/// </summary>
-		/// <param name="authenticationOption">One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption"/> values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
-		/// <param name="userInactiveSinceDate">A <see cref="T:System.DateTime"/> that identifies which user profiles are considered inactive. If the <see cref="P:System.Web.Profile.ProfileInfo.LastActivityDate"/>  of a user profile occurs on or before this date and time, the profile is considered inactive.</param>
-		/// <returns>
-		/// The number of profiles in which the last activity date occurred on or before the specified date.
-		/// </returns>
 		public override int GetNumberOfInactiveProfiles (ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate)
 		{
 			SqliteConnection cn = GetDbConnectionForProfile ();
@@ -426,16 +346,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Retrieves user profile data for all profiles in the data source.
-		/// </summary>
-		/// <param name="authenticationOption">One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption"/> values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
-		/// <param name="pageIndex">The index of the page of results to return.</param>
-		/// <param name="pageSize">The size of the page of results to return.</param>
-		/// <param name="totalRecords">When this method returns, contains the total number of profiles.</param>
-		/// <returns>
-		/// A <see cref="T:System.Web.Profile.ProfileInfoCollection"/> containing user-profile information for all profiles in the data source.
-		/// </returns>
 		public override ProfileInfoCollection GetAllProfiles (ProfileAuthenticationOption authenticationOption, int pageIndex, int pageSize, out int totalRecords)
 		{
 			string sqlQuery = "SELECT u.UserName, u.IsAnonymous, u.LastActivityDate, p.LastUpdatedDate, length(p.PropertyNames) + length(p.PropertyValuesString) FROM "
@@ -450,17 +360,6 @@ namespace TechInfoSystems.Data.SQLite
 			return GetProfilesForQuery (sqlQuery, args, pageIndex, pageSize, out totalRecords);
 		}
 
-		/// <summary>
-		/// Retrieves user-profile data from the data source for profiles in which the last activity date occurred on or before the specified date.
-		/// </summary>
-		/// <param name="authenticationOption">One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption"/> values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
-		/// <param name="userInactiveSinceDate">A <see cref="T:System.DateTime"/> that identifies which user profiles are considered inactive. If the <see cref="P:System.Web.Profile.ProfileInfo.LastActivityDate"/>  of a user profile occurs on or before this date and time, the profile is considered inactive.</param>
-		/// <param name="pageIndex">The index of the page of results to return.</param>
-		/// <param name="pageSize">The size of the page of results to return.</param>
-		/// <param name="totalRecords">When this method returns, contains the total number of profiles.</param>
-		/// <returns>
-		/// A <see cref="T:System.Web.Profile.ProfileInfoCollection"/> containing user-profile information about the inactive profiles.
-		/// </returns>
 		public override ProfileInfoCollection GetAllInactiveProfiles (ProfileAuthenticationOption authenticationOption, DateTime userInactiveSinceDate, int pageIndex, int pageSize, out int totalRecords)
 		{
 			string sqlQuery = "SELECT u.UserName, u.IsAnonymous, u.LastActivityDate, p.LastUpdatedDate, length(p.PropertyNames) + length(p.PropertyValuesString) FROM "
@@ -479,17 +378,6 @@ namespace TechInfoSystems.Data.SQLite
 			return GetProfilesForQuery (sqlQuery, args, pageIndex, pageSize, out totalRecords);
 		}
 
-		/// <summary>
-		/// Retrieves profile information for profiles in which the user name matches the specified user names.
-		/// </summary>
-		/// <param name="authenticationOption">One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption"/> values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
-		/// <param name="usernameToMatch">The user name to search for.</param>
-		/// <param name="pageIndex">The index of the page of results to return.</param>
-		/// <param name="pageSize">The size of the page of results to return.</param>
-		/// <param name="totalRecords">When this method returns, contains the total number of profiles.</param>
-		/// <returns>
-		/// A <see cref="T:System.Web.Profile.ProfileInfoCollection"/> containing user-profile information for profiles where the user name matches the supplied <paramref name="usernameToMatch"/> parameter.
-		/// </returns>
 		public override ProfileInfoCollection FindProfilesByUserName (ProfileAuthenticationOption authenticationOption, string usernameToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
 			string sqlQuery = "SELECT u.UserName, u.IsAnonymous, u.LastActivityDate, p.LastUpdatedDate, length(p.PropertyNames) + length(p.PropertyValuesString) FROM "
@@ -508,18 +396,6 @@ namespace TechInfoSystems.Data.SQLite
 			return GetProfilesForQuery (sqlQuery, args, pageIndex, pageSize, out totalRecords);
 		}
 
-		/// <summary>
-		/// Retrieves profile information for profiles in which the last activity date occurred on or before the specified date and the user name matches the specified user name.
-		/// </summary>
-		/// <param name="authenticationOption">One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption"/> values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
-		/// <param name="usernameToMatch">The user name to search for.</param>
-		/// <param name="userInactiveSinceDate">A <see cref="T:System.DateTime"/> that identifies which user profiles are considered inactive. If the <see cref="P:System.Web.Profile.ProfileInfo.LastActivityDate"/> value of a user profile occurs on or before this date and time, the profile is considered inactive.</param>
-		/// <param name="pageIndex">The index of the page of results to return.</param>
-		/// <param name="pageSize">The size of the page of results to return.</param>
-		/// <param name="totalRecords">When this method returns, contains the total number of profiles.</param>
-		/// <returns>
-		/// A <see cref="T:System.Web.Profile.ProfileInfoCollection"/> containing user profile information for inactive profiles where the user name matches the supplied <paramref name="usernameToMatch"/> parameter.
-		/// </returns>
 		public override ProfileInfoCollection FindInactiveProfilesByUserName (ProfileAuthenticationOption authenticationOption, string usernameToMatch, DateTime userInactiveSinceDate, int pageIndex, int pageSize, out int totalRecords)
 		{
 			string sqlQuery = "SELECT u.UserName, u.IsAnonymous, u.LastActivityDate, p.LastUpdatedDate, length(p.PropertyNames) + length(p.PropertyValuesString) FROM "
@@ -608,13 +484,13 @@ namespace TechInfoSystems.Data.SQLite
 				string name = names [iter * 4];
 				SettingsPropertyValue pp = properties [name];
 
-				if (pp == null) // property not found
+				if (pp == null)
 					continue;
 
 				int startPos = Int32.Parse (names [iter * 4 + 2], CultureInfo.InvariantCulture);
 				int length = Int32.Parse (names [iter * 4 + 3], CultureInfo.InvariantCulture);
 
-				if (length == -1 && !pp.Property.PropertyType.IsValueType) { // Null Value
+				if (length == -1 && !pp.Property.PropertyType.IsValueType) {
 					pp.PropertyValue = null;
 					pp.IsDirty = false;
 					pp.Deserialized = true;
@@ -651,7 +527,6 @@ namespace TechInfoSystems.Data.SQLite
 					string userId = cmd.ExecuteScalar () as string;
 
 					if (userId != null) {
-						// User exists?
 						cmd.CommandText = "SELECT PropertyNames, PropertyValuesString, PropertyValuesBinary FROM " + PROFILE_TB_NAME + " WHERE UserId = $UserId";
 						cmd.Parameters.Clear ();
 						cmd.Parameters.AddWithValue ("$UserId", userId);
@@ -706,9 +581,7 @@ namespace TechInfoSystems.Data.SQLite
 
 		private static void VerifyApplication ()
 		{
-			// Verify a record exists in the application table.
 			if (String.IsNullOrEmpty (_applicationId) || String.IsNullOrEmpty (_membershipApplicationName)) {
-				// No record exists in the application table for either the profile application and/or the membership application. Create it.
 				SqliteConnection cn = GetDbConnectionForProfile ();
 				try {
 					using (SqliteCommand cmd = cn.CreateCommand()) {
@@ -723,14 +596,12 @@ namespace TechInfoSystems.Data.SQLite
 						if (cn.State == ConnectionState.Closed)
 							cn.Open ();
 
-						// Insert record for the profile application.
 						if (String.IsNullOrEmpty (_applicationId)) {
 							cmd.ExecuteNonQuery ();
 
 							_applicationId = profileApplicationId;
 						}
 
-						// Insert record for the membership application.
 						if ((_applicationName != _membershipApplicationName) && (String.IsNullOrEmpty (_membershipApplicationId))) {
 							_membershipApplicationId = Guid.NewGuid ().ToString ();
 
@@ -832,8 +703,6 @@ namespace TechInfoSystems.Data.SQLite
 		{
 			object val = null;
 
-			//////////////////////////////////////////////
-			// Step 1: Try creating from Serialized value
 			if (obj != null) {
 				if (obj is string) {
 					val = GetObjectFromString (prop.Property.PropertyType, prop.Property.SerializeAs, (string)obj);
@@ -846,12 +715,10 @@ namespace TechInfoSystems.Data.SQLite
 					}
 				}
 
-				if (val != null && !prop.Property.PropertyType.IsAssignableFrom (val.GetType ())) // is it the correct type
+				if (val != null && !prop.Property.PropertyType.IsAssignableFrom (val.GetType ()))
 					val = null;
 			}
 
-			//////////////////////////////////////////////
-			// Step 2: Try creating from default value
 			if (val == null) {
 				if (prop.Property.DefaultValue == null || prop.Property.DefaultValue.ToString () == "[null]") {
 					if (prop.Property.PropertyType.IsValueType)
@@ -865,12 +732,10 @@ namespace TechInfoSystems.Data.SQLite
 					val = GetObjectFromString (prop.Property.PropertyType, prop.Property.SerializeAs, (string)prop.Property.DefaultValue);
 				}
 
-				if (val != null && !prop.Property.PropertyType.IsAssignableFrom (val.GetType ())) // is it the correct type
+				if (val != null && !prop.Property.PropertyType.IsAssignableFrom (val.GetType ()))
 					throw new ArgumentException ("Could not create from default value for property: " + prop.Property.Name);
 			}
 
-			//////////////////////////////////////////////
-			// Step 3: Create a new one by calling the parameterless constructor
 			if (val == null) {
 				if (prop.Property.PropertyType == typeof(string))
 					val = "";
@@ -911,7 +776,7 @@ namespace TechInfoSystems.Data.SQLite
 							continue;
 					}
 
-					if (!pp.IsDirty && pp.UsingDefaultValue) // Not fetched from DB and not written to
+					if (!pp.IsDirty && pp.UsingDefaultValue)
 						continue;
 
 					int len, startPos = 0;
@@ -1027,15 +892,12 @@ namespace TechInfoSystems.Data.SQLite
 
 		private static object GetObjectFromString (Type type, SettingsSerializeAs serializeAs, string attValue)
 		{
-			// Deal with string types
 			if (type == typeof(string) && (string.IsNullOrEmpty (attValue) || serializeAs == SettingsSerializeAs.String))
 				return attValue;
 
-			// Return null if there is nothing to convert
 			if (string.IsNullOrEmpty (attValue))
 				return null;
 
-			// Convert based on the serialized type
 			switch (serializeAs) {
 			
 				case SettingsSerializeAs.Binary:
@@ -1086,21 +948,9 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Get a reference to the database connection used for profile. If a transaction is currently in progress, and the
-		/// connection string of the transaction connection is the same as the connection string for the profile provider,
-		/// then the connection associated with the transaction is returned, and it will already be open. If no transaction is in progress,
-		/// a new <see cref="SqliteConnection"/> is created and returned. It will be closed and must be opened by the caller
-		/// before using.
-		/// </summary>
-		/// <returns>A <see cref="SqliteConnection"/> object.</returns>
-		/// <remarks>The transaction is stored in <see cref="System.Web.HttpContext.Current"/>. That means transaction support is limited
-		/// to web applications. For other types of applications, there is no transaction support unless this code is modified.</remarks>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		private static SqliteConnection GetDbConnectionForProfile ()
 		{
-			// Look in the HTTP context bag for a previously created connection and transaction. Return if found and its connection
-			// string matches that of the Profile connection string; otherwise return a fresh connection.
 			if (System.Web.HttpContext.Current != null) {
 				SqliteTransaction tran = (SqliteTransaction)System.Web.HttpContext.Current.Items [HTTP_TRANSACTION_ID];
 
@@ -1111,20 +961,6 @@ namespace TechInfoSystems.Data.SQLite
 			return new SqliteConnection (_connectionString);
 		}
 
-		/// <summary>
-		/// Determines whether a database transaction is in progress for the Profile provider.
-		/// </summary>
-		/// <returns>
-		/// 	<c>true</c> if a database transaction is in progress; otherwise, <c>false</c>.
-		/// </returns>
-		/// <remarks>A transaction is considered in progress if an instance of <see cref="SqliteTransaction"/> is found in the
-		/// <see cref="System.Web.HttpContext.Current"/> Items property and its connection string is equal to the Profile 
-		/// provider's connection string. Note that this implementation of <see cref="SQLiteProfileProvider"/> never adds a 
-		/// <see cref="SqliteTransaction"/> to <see cref="System.Web.HttpContext.Current"/>, but it is possible that 
-		/// another data provider in this application does. This may be because other data is also stored in this SQLite database,
-		/// and the application author wants to provide transaction support across the individual providers. If an instance of
-		/// <see cref="System.Web.HttpContext.Current"/> does not exist (for example, if the calling application is not a web application),
-		/// this method always returns false.</remarks>
 		private static bool IsTransactionInProgress ()
 		{
 			if (System.Web.HttpContext.Current == null)

@@ -29,7 +29,6 @@ namespace OWASP.WebGoat.NET.App_Code
             return ascii.GetString(bytes);
         }
 
-        //Algo is dead simple. Just sum up the ASCII value and mod back to a printable char.
         public static byte GenByte(string word)
         {
             int val = 0;
@@ -38,7 +37,6 @@ namespace OWASP.WebGoat.NET.App_Code
             foreach(char c in word)
                 val += (byte) c;
 
-            //NOTE: Need to be between 32 and 126 in the ASCII table to be printable
             bVal = (byte) (val % (127 - 32 -1) + 33);
 
             return bVal;

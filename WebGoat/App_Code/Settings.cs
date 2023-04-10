@@ -40,7 +40,6 @@ namespace OWASP.WebGoat.NET.App_Code
                 log.Debug("DYLD_FALLBACK_LIBRARY_PATH: " + Environment.GetEnvironmentVariable("DYLD_FALLBACK_LIBRARY_PATH"));
                 log.Debug("PWD: " + Environment.CurrentDirectory);
 
-                //By default if there's no config let's create a sqlite db.
                 string defaultConfigPath = DefaultConfigPath;
 
                 string sqlitePath = Path.Combine(DATA_FOLDER, DEFAULT_SQLITE_NAME);

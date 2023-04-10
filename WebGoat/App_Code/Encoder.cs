@@ -11,17 +11,9 @@ namespace OWASP.WebGoat.NET.App_Code
 {
     public class Encoder
     {
-        //use for encryption
-        //encryption methods taken from: http://stackoverflow.com/questions/202011/encrypt-decrypt-string-in-net
         private static byte[] _salt = Encoding.ASCII.GetBytes("o6806642kbM7c5");
 
 
-        /// <summary>
-        /// Encrypt the given string using AES.  The string can be decrypted using 
-        /// DecryptStringAES().  The sharedSecret parameters must match.
-        /// </summary>
-        /// <param name="plainText">The text to encrypt.</param>
-        /// <param name="sharedSecret">A password used to generate a key for encryption.</param>
         public static string EncryptStringAES(string plainText, string sharedSecret)
         {
             if (string.IsNullOrEmpty(plainText))
@@ -29,24 +21,19 @@ namespace OWASP.WebGoat.NET.App_Code
             if (string.IsNullOrEmpty(sharedSecret))
                 throw new ArgumentNullException("sharedSecret");
 
-            string outStr = null;                       // Encrypted string to return
-            RijndaelManaged aesAlg = null;              // RijndaelManaged object used to encrypt the data.
+            string outStr = null;
+            RijndaelManaged aesAlg = null;
 
             try
             {
-                // generate the key from the shared secret and the salt
                 Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(sharedSecret, _salt);
 
-                // Create a RijndaelManaged object
-                // with the specified key and IV.
                 aesAlg = new RijndaelManaged();
                 aesAlg.Key = key.GetBytes(aesAlg.KeySize / 8);
                 aesAlg.IV = key.GetBytes(aesAlg.BlockSize / 8);
 
-                // Create a decrytor to perform the stream transform.
                 ICryptoTransform encryptor = aesAlg.CreateEncryptor(aesAlg.Key, aesAlg.IV);
 
-                // Create the streams used for encryption.
                 using (MemoryStream msEncrypt = new MemoryStream())
                 {
                     using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
@@ -54,7 +41,6 @@ namespace OWASP.WebGoat.NET.App_Code
                         using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
                         {
 
-                            //Write all data to the stream.
                             swEncrypt.Write(plainText);
                         }
                     }
@@ -63,21 +49,13 @@ namespace OWASP.WebGoat.NET.App_Code
             }
             finally
             {
-                // Clear the RijndaelManaged object.
                 if (aesAlg != null)
                     aesAlg.Clear();
             }
 
-            // Return the encrypted bytes from the memory stream.
             return outStr;
         }
 
-        /// <summary>
-        /// Decrypt the given string.  Assumes the string was encrypted using 
-        /// EncryptStringAES(), using an identical sharedSecret.
-        /// </summary>
-        /// <param name="cipherText">The text to decrypt.</param>
-        /// <param name="sharedSecret">A password used to generate a key for decryption.</param>
         public static string DecryptStringAES(string cipherText, string sharedSecret)
         {
             if (string.IsNullOrEmpty(cipherText))
@@ -85,28 +63,19 @@ namespace OWASP.WebGoat.NET.App_Code
             if (string.IsNullOrEmpty(sharedSecret))
                 throw new ArgumentNullException("sharedSecret");
 
-            // Declare the RijndaelManaged object
-            // used to decrypt the data.
             RijndaelManaged aesAlg = null;
 
-            // Declare the string used to hold
-            // the decrypted text.
             string plaintext = null;
 
             try
             {
-                // generate the key from the shared secret and the salt
                 Rfc2898DeriveBytes key = new Rfc2898DeriveBytes(sharedSecret, _salt);
 
-                // Create a RijndaelManaged object
-                // with the specified key and IV.
                 aesAlg = new RijndaelManaged();
                 aesAlg.Key = key.GetBytes(aesAlg.KeySize / 8);
                 aesAlg.IV = key.GetBytes(aesAlg.BlockSize / 8);
 
-                // Create a decrytor to perform the stream transform.
                 ICryptoTransform decryptor = aesAlg.CreateDecryptor(aesAlg.Key, aesAlg.IV);
-                // Create the streams used for decryption.                
                 byte[] bytes = Convert.FromBase64String(cipherText);
                 using (MemoryStream msDecrypt = new MemoryStream(bytes))
                 {
@@ -114,15 +83,12 @@ namespace OWASP.WebGoat.NET.App_Code
                     {
                         using (StreamReader srDecrypt = new StreamReader(csDecrypt))
 
-                            // Read the decrypted bytes from the decrypting stream
-                            // and place them in a string.
                             plaintext = srDecrypt.ReadToEnd();
                     }
                 }
             }
             finally
             {
-                // Clear the RijndaelManaged object.
                 if (aesAlg != null)
                     aesAlg.Clear();
             }
@@ -130,11 +96,6 @@ namespace OWASP.WebGoat.NET.App_Code
             return plaintext;
         }
 
-        /// <summary>
-        /// returns an base64 encoded string
-        /// </summary>
-        /// <param name="s">string to encode</param>
-        /// <returns></returns>
         public static string Encode(string s)
         {
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(s);
@@ -142,11 +103,6 @@ namespace OWASP.WebGoat.NET.App_Code
             return output;
         }
 
-        /// <summary>
-        /// Converts a string from Base64
-        /// </summary>
-        /// <param name="s">Base64 encoded string</param>
-        /// <returns></returns>
         public static String Decode(string s)
         {
             byte[] bytes = System.Convert.FromBase64String(s);
@@ -155,11 +111,6 @@ namespace OWASP.WebGoat.NET.App_Code
         }
 
 
-        /// <summary>
-        /// From http://weblogs.asp.net/navaidakhtar/archive/2008/07/08/converting-data-table-dataset-into-json-string.aspx
-        /// </summary>
-        /// <param name="dt"></param>
-        /// <returns>string</returns>
         public static string ToJSONString(DataTable dt)
         {
             string[] StrDc = new string[dt.Columns.Count];
@@ -228,16 +179,16 @@ namespace OWASP.WebGoat.NET.App_Code
         {
             FormsAuthenticationTicket ticket =
                 new FormsAuthenticationTicket(
-                    1, //version 
-                    token, //token 
-                    DateTime.Now, //issueDate
-                    DateTime.Now.AddDays(14), //expireDate 
-                    true, //isPersistent
-                    "customer", //userData (customer role)
-                    FormsAuthentication.FormsCookiePath //cookiePath
+                    1,
+                    token,
+                    DateTime.Now,
+                    DateTime.Now.AddDays(14),
+                    true,
+                    "customer",
+                    FormsAuthentication.FormsCookiePath
             );
 
-            return FormsAuthentication.Encrypt(ticket); //encrypt the ticket
+            return FormsAuthentication.Encrypt(ticket);
         }
 
     }

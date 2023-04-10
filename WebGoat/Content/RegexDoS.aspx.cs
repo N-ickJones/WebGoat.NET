@@ -12,9 +12,6 @@ namespace OWASP.WebGoat.NET
 
         }
 
-        /// <summary>
-        /// Code from https://www.owasp.org/index.php/Regular_expression_Denial_of_Service_-_ReDoS
-        /// </summary>
         protected void btnCreate_Click(object sender, EventArgs e)
         {
             string userName = txtUsername.Text;
