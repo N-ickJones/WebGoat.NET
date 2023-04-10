@@ -6,7 +6,6 @@ using System.Reflection;
 
 namespace OWASP.WebGoat.NET.App_Code.DB
 {
-    //NOT THREAD SAFE!
     public class DbProviderFactory
     {
         private static ILog log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);

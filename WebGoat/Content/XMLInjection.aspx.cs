@@ -24,20 +24,7 @@ namespace OWASP.WebGoat.NET
            
             gvUsers.DataBind();
 
-/*<?xml version="1.0" standalone="yes"?>
-<users>
-  <user>
-    <name>Todd Smith</name>
-    <email>todd@example.com</email>
-  </user>
-  <user>
-    <name>Al Thompson</name>
-    <email>al@example.com</email>
-  </user>
-</users>
-*/
 
-            //Need to add lesson!
             if (Request.QueryString["name"] != null && Request.QueryString["email"] != null)
             {
                 users.Add(new XmlUser(Request.QueryString["name"], Request.QueryString["email"]));

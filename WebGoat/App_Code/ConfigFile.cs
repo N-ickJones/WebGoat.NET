@@ -21,12 +21,10 @@ namespace OWASP.WebGoat.NET.App_Code
             _filePath = fileName;
         }
             
-        //TODO: Obviously no checks for problems, so when you get time do it like bhudda.
         public void Load()
         {
             string comment = string.Empty;
             
-            //It's all or nothing here buddy.
             foreach (string line in File.ReadAllLines(_filePath))
             {
                 

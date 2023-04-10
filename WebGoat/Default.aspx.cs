@@ -17,14 +17,12 @@ namespace OWASP.WebGoat.NET
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            //do a quick test.  If the database connects, inform the user the database seems to be working.
             if (du.TestConnection())
             {
                 lblOutput.Text = string.Format("You appear to be connected to a valid {0} provider. " +
                                                "If you want to reconfigure or rebuild the database, click on the button below!", du.Name);
                 Session["DBConfigured"] = true;
 
-                //Info leak
                 HttpCookie cookie = new HttpCookie("Server", Encoder.Encode(Server.MachineName));
                 Response.Cookies.Add(cookie);
             }
@@ -33,7 +31,6 @@ namespace OWASP.WebGoat.NET
                 lblOutput.Text = "Before proceeding, please ensure this instance of WebGoat.NET can connect to the database!";
             }
 
-            // Write viewState to Screen 
             ViewState["Session"] = Session.SessionID;
         }
     }

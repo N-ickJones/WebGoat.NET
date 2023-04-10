@@ -5,7 +5,6 @@ namespace OWASP.WebGoat.NET.App_Code.DB
 {
     public class DbConstants
     {
-        //Keys
         public const string KEY_DB_TYPE = "dbtype";
         public const string KEY_CLIENT_EXEC = "client";
         public const string KEY_HOST = "host";
@@ -15,12 +14,10 @@ namespace OWASP.WebGoat.NET.App_Code.DB
         public const string KEY_UID = "uid";
         public const string KEY_PWD = "pwd";
             
-        //DB Types
         public const string DB_TYPE_MYSQL = "MySql";
         public const string DB_TYPE_SQLITE = "Sqlite";
         public const string CONFIG_EXT = "config";
 
-        //DB Scripts
         private const string SCRIPT_DIR = "DB_Scripts";
         public static readonly string DB_CREATE_MYSQL_SCRIPT = Path.Combine(SCRIPT_DIR, "create_webgoatcoins.sql");
         public static readonly string DB_CREATE_SQLITE_SCRIPT = Path.Combine(SCRIPT_DIR, "create_webgoatcoins_sqlite3.sql");

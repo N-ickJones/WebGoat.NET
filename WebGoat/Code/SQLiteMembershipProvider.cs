@@ -12,9 +12,6 @@ using System.Web.Security;
 
 namespace TechInfoSystems.Data.SQLite
 {
-	/// <summary>
-	/// Provides a Membership implementation whose data is stored in a SQLite database.
-	/// </summary>
 	public sealed class SQLiteMembershipProvider : MembershipProvider
 	{
 		#region Private Fields
@@ -50,13 +47,6 @@ namespace TechInfoSystems.Data.SQLite
 
 		#region Public Properties
 
-		/// <summary>
-		/// The name of the application using the custom membership provider.
-		/// </summary>
-		/// <value></value>
-		/// <returns>
-		/// The name of the application using the custom membership provider.
-		/// </returns>
 		public override string ApplicationName {
 			get { return _applicationName; }
 			set {
@@ -68,108 +58,42 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Indicates whether the membership provider is configured to allow users to reset their passwords.
-		/// </summary>
-		/// <value></value>
-		/// <returns>true if the membership provider supports password reset; otherwise, false. The default is true.
-		/// </returns>
 		public override bool EnablePasswordReset {
 			get { return _enablePasswordReset; }
 		}
 
-		/// <summary>
-		/// Indicates whether the membership provider is configured to allow users to retrieve their passwords.
-		/// </summary>
-		/// <value></value>
-		/// <returns>true if the membership provider is configured to support password retrieval; otherwise, false. The default is false.
-		/// </returns>
 		public override bool EnablePasswordRetrieval {
 			get { return _enablePasswordRetrieval; }
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether the membership provider is configured to require the user to answer a password question for password reset and retrieval.
-		/// </summary>
-		/// <value></value>
-		/// <returns>true if a password answer is required for password reset and retrieval; otherwise, false. The default is true.
-		/// </returns>
 		public override bool RequiresQuestionAndAnswer {
 			get { return _requiresQuestionAndAnswer; }
 		}
 
-		/// <summary>
-		/// Gets a value indicating whether the membership provider is configured to require a unique e-mail address for each user name.
-		/// </summary>
-		/// <value></value>
-		/// <returns>true if the membership provider requires a unique e-mail address; otherwise, false. The default is true.
-		/// </returns>
 		public override bool RequiresUniqueEmail {
 			get { return _requiresUniqueEmail; }
 		}
 
-		/// <summary>
-		/// Gets the number of invalid password or password-answer attempts allowed before the membership user is locked out.
-		/// </summary>
-		/// <value></value>
-		/// <returns>
-		/// The number of invalid password or password-answer attempts allowed before the membership user is locked out.
-		/// </returns>
 		public override int MaxInvalidPasswordAttempts {
 			get { return _maxInvalidPasswordAttempts; }
 		}
 
-		/// <summary>
-		/// Gets the number of minutes in which a maximum number of invalid password or password-answer attempts are allowed before the membership user is locked out.
-		/// </summary>
-		/// <value></value>
-		/// <returns>
-		/// The number of minutes in which a maximum number of invalid password or password-answer attempts are allowed before the membership user is locked out.
-		/// </returns>
 		public override int PasswordAttemptWindow {
 			get { return _passwordAttemptWindow; }
 		}
 
-		/// <summary>
-		/// Gets a value indicating the format for storing passwords in the membership data store.
-		/// </summary>
-		/// <value></value>
-		/// <returns>
-		/// One of the <see cref="T:System.Web.Security.MembershipPasswordFormat"/> values indicating the format for storing passwords in the data store.
-		/// </returns>
 		public override MembershipPasswordFormat PasswordFormat {
 			get { return _passwordFormat; }
 		}
 
-		/// <summary>
-		/// Gets the minimum number of special characters that must be present in a valid password.
-		/// </summary>
-		/// <value></value>
-		/// <returns>
-		/// The minimum number of special characters that must be present in a valid password.
-		/// </returns>
 		public override int MinRequiredNonAlphanumericCharacters {
 			get { return _minRequiredNonAlphanumericCharacters; }
 		}
 
-		/// <summary>
-		/// Gets the minimum length required for a password.
-		/// </summary>
-		/// <value></value>
-		/// <returns>
-		/// The minimum length required for a password.
-		/// </returns>
 		public override int MinRequiredPasswordLength {
 			get { return _minRequiredPasswordLength; }
 		}
 
-		/// <summary>
-		/// Gets the regular expression used to evaluate a password.
-		/// </summary>
-		/// <value></value>
-		/// <returns>
-		/// A regular expression used to evaluate a password.
-		/// </returns>
 		public override string PasswordStrengthRegularExpression {
 			get { return _passwordStrengthRegularExpression; }
 		}
@@ -178,23 +102,8 @@ namespace TechInfoSystems.Data.SQLite
 
 		#region Public Methods
 
-		/// <summary>
-		/// Initializes the provider.
-		/// </summary>
-		/// <param name="name">The friendly name of the provider.</param>
-		/// <param name="config">A collection of the name/value pairs representing the provider-specific attributes specified in the configuration for this provider.</param>
-		/// <exception cref="T:System.ArgumentNullException">
-		/// The name of the provider is null.
-		/// </exception>
-		/// <exception cref="T:System.ArgumentException">
-		/// The name of the provider has a length of zero.
-		/// </exception>
-		/// <exception cref="T:System.InvalidOperationException">
-		/// An attempt is made to call <see cref="M:System.Configuration.Provider.ProviderBase.Initialize(System.String,System.Collections.Specialized.NameValueCollection)"/> on a provider after the provider has already been initialized.
-		/// </exception>
 		public override void Initialize (string name, NameValueCollection config)
 		{
-			// Initialize values from web.config.
 			if (config == null)
 				throw new ArgumentNullException ("config");
 
@@ -206,7 +115,6 @@ namespace TechInfoSystems.Data.SQLite
 				config.Add ("description", "SQLite Membership provider");
 			}
 
-			// Initialize the abstract base class.
 			base.Initialize (name, config);
 
 			_maxInvalidPasswordAttempts = Convert.ToInt32 (GetConfigValue (config ["maxInvalidPasswordAttempts"], "50"));
@@ -248,7 +156,6 @@ namespace TechInfoSystems.Data.SQLite
 				throw new ProviderException ("SQLiteMembershipProvider configuration error: enablePasswordRetrieval can not be set to true when passwordFormat is set to \"Hashed\". Check the web configuration file (web.config).");
 			}
 
-			// Initialize SqliteConnection.
 			ConnectionStringSettings ConnectionStringSettings = ConfigurationManager.ConnectionStrings [config ["connectionStringName"]];
 
 			if (ConnectionStringSettings == null || ConnectionStringSettings.ConnectionString == null || ConnectionStringSettings.ConnectionString.Trim ().Length == 0) {
@@ -257,14 +164,12 @@ namespace TechInfoSystems.Data.SQLite
 
 			_connectionString = ConnectionStringSettings.ConnectionString;
 
-			// Get application name
 			if (config ["applicationName"] == null || config ["applicationName"].Trim () == "") {
 				this.ApplicationName = System.Web.Hosting.HostingEnvironment.ApplicationVirtualPath;
 			} else {
 				this.ApplicationName = config ["applicationName"];
 			}
 
-			// Check for invalid parameters in the config
 			config.Remove ("connectionStringName");
 			config.Remove ("enablePasswordRetrieval");
 			config.Remove ("enablePasswordReset");
@@ -287,19 +192,9 @@ namespace TechInfoSystems.Data.SQLite
 				}
 			}
 
-			// Verify a record exists in the application table.
 			VerifyApplication ();
 		}
 
-		/// <summary>
-		/// Processes a request to update the password for a membership user.
-		/// </summary>
-		/// <param name="username">The user to update the password for.</param>
-		/// <param name="oldPassword">The current password for the specified user.</param>
-		/// <param name="newPassword">The new password for the specified user.</param>
-		/// <returns>
-		/// true if the password was updated successfully; otherwise, false.
-		/// </returns>
 		public override bool ChangePassword (string username, string oldPassword, string newPassword)
 		{
 			SecUtility.CheckParameter (ref username, true, true, true, MAX_USERNAME_LENGTH, "username");
@@ -367,16 +262,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Processes a request to update the password question and answer for a membership user.
-		/// </summary>
-		/// <param name="username">The user to change the password question and answer for.</param>
-		/// <param name="password">The password for the specified user.</param>
-		/// <param name="newPasswordQuestion">The new password question for the specified user.</param>
-		/// <param name="newPasswordAnswer">The new password answer for the specified user.</param>
-		/// <returns>
-		/// true if the password question and answer are updated successfully; otherwise, false.
-		/// </returns>
 		public override bool ChangePasswordQuestionAndAnswer (string username, string password, string newPasswordQuestion, string newPasswordAnswer)
 		{
 			SecUtility.CheckParameter (ref username, true, true, true, MAX_USERNAME_LENGTH, "username");
@@ -423,20 +308,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Adds a new membership user to the data source.
-		/// </summary>
-		/// <param name="username">The user name for the new user.</param>
-		/// <param name="password">The password for the new user.</param>
-		/// <param name="email">The e-mail address for the new user.</param>
-		/// <param name="passwordQuestion">The password question for the new user.</param>
-		/// <param name="passwordAnswer">The password answer for the new user</param>
-		/// <param name="isApproved">Whether or not the new user is approved to be validated.</param>
-		/// <param name="providerUserKey">The unique identifier from the membership data source for the user.</param>
-		/// <param name="status">A <see cref="T:System.Web.Security.MembershipCreateStatus"/> enumeration value indicating whether the user was created successfully.</param>
-		/// <returns>
-		/// A <see cref="T:System.Web.Security.MembershipUser"/> object populated with the information for the newly created user.
-		/// </returns>
 		public override MembershipUser CreateUser (string username, string password, string email, string passwordQuestion, string passwordAnswer, bool isApproved, object providerUserKey, out MembershipCreateStatus status)
 		{
 			#region Validation
@@ -613,14 +484,6 @@ namespace TechInfoSystems.Data.SQLite
 			return null;
 		}
 
-		/// <summary>
-		/// Removes a user from the membership data source.
-		/// </summary>
-		/// <param name="username">The name of the user to delete.</param>
-		/// <param name="deleteAllRelatedData">true to delete data related to the user from the database; false to leave data related to the user in the database.</param>
-		/// <returns>
-		/// true if the user was successfully deleted; otherwise, false.
-		/// </returns>
 		public override bool DeleteUser (string username, bool deleteAllRelatedData)
 		{
 			SqliteConnection cn = GetDBConnectionForMembership ();
@@ -629,7 +492,6 @@ namespace TechInfoSystems.Data.SQLite
 					if (cn.State == ConnectionState.Closed)
 						cn.Open ();
 
-					// Get UserId if necessary.
 					string userId = null;
 					if (deleteAllRelatedData) {
 						cmd.CommandText = "SELECT UserId FROM " + USER_TB_NAME + " WHERE LoweredUsername = $Username AND ApplicationId = $ApplicationId";
@@ -648,13 +510,11 @@ namespace TechInfoSystems.Data.SQLite
 					int rowsAffected = cmd.ExecuteNonQuery ();
 
 					if (deleteAllRelatedData && (!String.IsNullOrEmpty ((userId)))) {
-						// Delete from user/role relationship table.
 						cmd.CommandText = "DELETE FROM " + USERS_IN_ROLES_TB_NAME + " WHERE UserId = $UserId";
 						cmd.Parameters.Clear ();
 						cmd.Parameters.AddWithValue ("$UserId", userId);
 						cmd.ExecuteNonQuery ();
 
-						// Delete from profile table.
 						cmd.CommandText = "DELETE FROM " + PROFILE_TB_NAME + " WHERE UserId = $UserId";
 						cmd.Parameters.Clear ();
 						cmd.Parameters.AddWithValue ("$UserId", userId);
@@ -669,15 +529,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Gets a collection of all the users in the data source in pages of data.
-		/// </summary>
-		/// <param name="pageIndex">The index of the page of results to return. <paramref name="pageIndex"/> is zero-based.</param>
-		/// <param name="pageSize">The size of the page of results to return.</param>
-		/// <param name="totalRecords">The total number of matched users.</param>
-		/// <returns>
-		/// A <see cref="T:System.Web.Security.MembershipUserCollection"/> collection that contains a page of <paramref name="pageSize"/><see cref="T:System.Web.Security.MembershipUser"/> objects beginning at the page specified by <paramref name="pageIndex"/>.
-		/// </returns>
 		public override MembershipUserCollection GetAllUsers (int pageIndex, int pageSize, out int totalRecords)
 		{
 			SqliteConnection cn = GetDBConnectionForMembership ();
@@ -731,12 +582,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Gets the number of users currently accessing the application.
-		/// </summary>
-		/// <returns>
-		/// The number of users currently accessing the application.
-		/// </returns>
 		public override int GetNumberOfUsersOnline ()
 		{
 			SqliteConnection cn = GetDBConnectionForMembership ();
@@ -762,14 +607,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Gets the password for the specified user name from the data source.
-		/// </summary>
-		/// <param name="username">The user to retrieve the password for.</param>
-		/// <param name="answer">The password answer for the user.</param>
-		/// <returns>
-		/// The password for the specified user name.
-		/// </returns>
 		public override string GetPassword (string username, string answer)
 		{
 			if (!EnablePasswordRetrieval) {
@@ -829,14 +666,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Gets information from the data source for a user. Provides an option to update the last-activity date/time stamp for the user.
-		/// </summary>
-		/// <param name="username">The name of the user to get information for.</param>
-		/// <param name="userIsOnline">true to update the last-activity date/time stamp for the user; false to return user information without updating the last-activity date/time stamp for the user.</param>
-		/// <returns>
-		/// A <see cref="T:System.Web.Security.MembershipUser"/> object populated with the specified user's information from the data source.
-		/// </returns>
 		public override MembershipUser GetUser (string username, bool userIsOnline)
 		{
 			SqliteConnection cn = GetDBConnectionForMembership ();
@@ -880,14 +709,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Gets user information from the data source based on the unique identifier for the membership user. Provides an option to update the last-activity date/time stamp for the user.
-		/// </summary>
-		/// <param name="providerUserKey">The unique identifier for the membership user to get information for.</param>
-		/// <param name="userIsOnline">true to update the last-activity date/time stamp for the user; false to return user information without updating the last-activity date/time stamp for the user.</param>
-		/// <returns>
-		/// A <see cref="T:System.Web.Security.MembershipUser"/> object populated with the specified user's information from the data source.
-		/// </returns>
 		public override MembershipUser GetUser (object providerUserKey, bool userIsOnline)
 		{
 			SqliteConnection cn = GetDBConnectionForMembership ();
@@ -929,11 +750,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Unlocks the user.
-		/// </summary>
-		/// <param name="username">The username.</param>
-		/// <returns>Returns true if user was unlocked; otherwise returns false.</returns>
 		public override bool UnlockUser (string username)
 		{
 			SqliteConnection cn = GetDBConnectionForMembership ();
@@ -960,13 +776,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Gets the user name associated with the specified e-mail address.
-		/// </summary>
-		/// <param name="email">The e-mail address to search for.</param>
-		/// <returns>
-		/// The user name associated with the specified e-mail address. If no match is found, return null.
-		/// </returns>
 		public override string GetUserNameByEmail (string email)
 		{
 			if (email == null)
@@ -992,25 +801,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Resets a user's password to a new, automatically generated password.
-		/// </summary>
-		/// <param name="username">The user to reset the password for.</param>
-		/// <param name="passwordAnswer">The password answer for the specified user.</param>
-		/// <returns>The new password for the specified user.</returns>
-		/// <exception cref="T:System.Configuration.Provider.ProviderException">username is not found in the membership database.- or -The 
-		/// change password action was canceled by a subscriber to the System.Web.Security.Membership.ValidatePassword
-		/// event and the <see cref="P:System.Web.Security.ValidatePasswordEventArgs.FailureInformation"></see> property was null.- or -An 
-		/// error occurred while retrieving the password from the database. </exception>
-		/// <exception cref="T:System.NotSupportedException"><see cref="P:System.Web.Security.SqlMembershipProvider.EnablePasswordReset"></see> 
-		/// is set to false. </exception>
-		/// <exception cref="T:System.ArgumentException">username is an empty string (""), contains a comma, or is longer than 256 characters.
-		/// - or -passwordAnswer is an empty string or is longer than 128 characters and 
-		/// <see cref="P:System.Web.Security.SqlMembershipProvider.RequiresQuestionAndAnswer"></see> is true.- or -passwordAnswer is longer 
-		/// than 128 characters after encoding.</exception>
-		/// <exception cref="T:System.ArgumentNullException">username is null.- or -passwordAnswer is null and 
-		/// <see cref="P:System.Web.Security.SqlMembershipProvider.RequiresQuestionAndAnswer"></see> is true.</exception>
-		/// <exception cref="T:System.Web.Security.MembershipPasswordException">passwordAnswer is invalid. - or -The user account is currently locked out.</exception>
 		public override string ResetPassword (string username, string passwordAnswer)
 		{
 			string salt;
@@ -1058,7 +848,6 @@ namespace TechInfoSystems.Data.SQLite
 				throw new ProviderException ("The custom password validation failed.");
 			}
 
-			// From this point on the only logic I need to implement is that contained in aspnet_Membership_ResetPassword.
 			SqliteConnection cn = GetDBConnectionForMembership ();
 			try {
 				using (SqliteCommand cmd = cn.CreateCommand()) {
@@ -1116,10 +905,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Updates information about a user in the data source.
-		/// </summary>
-		/// <param name="user">A <see cref="T:System.Web.Security.MembershipUser"/> object that represents the user to update and the updated information for the user.</param>
 		public override void UpdateUser (MembershipUser user)
 		{
 			SqliteConnection cn = GetDBConnectionForMembership ();
@@ -1148,14 +933,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Verifies that the specified user name and password exist in the data source.
-		/// </summary>
-		/// <param name="username">The name of the user to validate.</param>
-		/// <param name="password">The password for the specified user.</param>
-		/// <returns>
-		/// true if the specified username and password are valid; otherwise, false.
-		/// </returns>
 		public override bool ValidateUser (string username, string password)
 		{
 			if (!SecUtility.ValidateParameter (ref username, true, true, true, MAX_USERNAME_LENGTH) || !SecUtility.ValidateParameter (ref password, true, true, false, MAX_PASSWORD_LENGTH)) {
@@ -1167,7 +944,6 @@ namespace TechInfoSystems.Data.SQLite
 			bool isAuthenticated = CheckPassword (username, password, true, out salt, out passwordFormat);
 
 			if (isAuthenticated) {
-				// User is authenticated. Update last activity and last login dates.
 				SqliteConnection cn = GetDBConnectionForMembership ();
 				try {
 					using (SqliteCommand cmd = cn.CreateCommand()) {
@@ -1193,16 +969,6 @@ namespace TechInfoSystems.Data.SQLite
 			return isAuthenticated;
 		}
 
-		/// <summary>
-		/// Gets a collection of membership users where the user name contains the specified user name to match.
-		/// </summary>
-		/// <param name="usernameToMatch">The user name to search for.</param>
-		/// <param name="pageIndex">The index of the page of results to return. <paramref name="pageIndex"/> is zero-based.</param>
-		/// <param name="pageSize">The size of the page of results to return.</param>
-		/// <param name="totalRecords">The total number of matched users.</param>
-		/// <returns>
-		/// A <see cref="T:System.Web.Security.MembershipUserCollection"/> collection that contains a page of <paramref name="pageSize"/><see cref="T:System.Web.Security.MembershipUser"/> objects beginning at the page specified by <paramref name="pageIndex"/>.
-		/// </returns>
 		public override MembershipUserCollection FindUsersByName (string usernameToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
 			SqliteConnection cn = GetDBConnectionForMembership ();
@@ -1259,16 +1025,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Gets a collection of membership users where the e-mail address contains the specified e-mail address to match.
-		/// </summary>
-		/// <param name="emailToMatch">The e-mail address to search for.</param>
-		/// <param name="pageIndex">The index of the page of results to return. <paramref name="pageIndex"/> is zero-based.</param>
-		/// <param name="pageSize">The size of the page of results to return.</param>
-		/// <param name="totalRecords">The total number of matched users.</param>
-		/// <returns>
-		/// A <see cref="T:System.Web.Security.MembershipUserCollection"/> collection that contains a page of <paramref name="pageSize"/><see cref="T:System.Web.Security.MembershipUser"/> objects beginning at the page specified by <paramref name="pageIndex"/>.
-		/// </returns>
 		public override MembershipUserCollection FindUsersByEmail (string emailToMatch, int pageIndex, int pageSize, out int totalRecords)
 		{
 			SqliteConnection cn = GetDBConnectionForMembership ();
@@ -1331,7 +1087,6 @@ namespace TechInfoSystems.Data.SQLite
 
 		private static void ValidatePwdStrengthRegularExpression ()
 		{
-			// Validate regular expression, if supplied.
 			if (_passwordStrengthRegularExpression == null)
 				_passwordStrengthRegularExpression = String.Empty;
 
@@ -1347,11 +1102,9 @@ namespace TechInfoSystems.Data.SQLite
 
 		private static void VerifyApplication ()
 		{
-			// Verify a record exists in the application table.
 			if (!String.IsNullOrEmpty (_applicationId))
 				return;
 
-			// No record exists in the application table. Create one now.
 			SqliteConnection cn = GetDBConnectionForMembership ();
 			try {
 				using (SqliteCommand cmd = cn.CreateCommand()) {
@@ -1394,7 +1147,6 @@ namespace TechInfoSystems.Data.SQLite
 
 		private static string GetConfigValue (string configValue, string defaultValue)
 		{
-			// A helper function to retrieve config values from the configuration file.
 			if (String.IsNullOrEmpty (configValue))
 				return defaultValue;
 
@@ -1403,13 +1155,6 @@ namespace TechInfoSystems.Data.SQLite
 
 		private MembershipUser GetUserFromReader (IDataRecord reader)
 		{
-			// A helper function that takes the current row from the SqliteDataReader
-			// and hydrates a MembershipUser from the values. Called by the MembershipUser.GetUser implementation.
-			// Datareader is filled with SQL specifying these fields:
-			// SELECT UserId, Username, Email, PasswordQuestion,"
-			// + " Comment, IsApproved, IsLockedOut, CreateDate, LastLoginDate,"
-			// + " LastActivityDate, LastPasswordChangedDate, LastLockoutDate"
-			// + " FROM " + USER_TB_NAME
 			if (reader.GetString (1) == "")
 				return null;
 			object providerUserKey = null;
@@ -1461,7 +1206,6 @@ namespace TechInfoSystems.Data.SQLite
 
 		private void UpdateFailureCount (string username, string failureType, bool isAuthenticated)
 		{
-			// A helper method that performs the checks and updates associated with password failure tracking.
 			if (!((failureType == "password") || (failureType == "passwordAnswer"))) {
 				throw new ArgumentException ("Invalid value for failureType parameter. Must be 'password' or 'passwordAnswer'.", "failureType");
 			}
@@ -1499,10 +1243,9 @@ namespace TechInfoSystems.Data.SQLite
 					}
 
 					if (isLockedOut)
-						return; // Just exit without updating any fields if user is locked out.
+						return;
 
 					if (isAuthenticated) {
-						// User is valid, so make sure certain fields have been reset.
 						if ((failedPasswordAttemptCount > 0) || (failedPasswordAnswerAttemptCount > 0)) {
 							cmd.CommandText = "UPDATE " + USER_TB_NAME
 								+ " SET FailedPasswordAttemptCount = 0, FailedPasswordAttemptWindowStart = $MinDate, "
@@ -1520,8 +1263,6 @@ namespace TechInfoSystems.Data.SQLite
 						return;
 					}
 
-					// If we get here that means isAuthenticated = false, which means the user did not log on successfully.
-					// Log the failure and possibly lock out the user if she exceeded the number of allowed attempts.
 					DateTime windowStart = _minDate;
 					int failureCount = 0;
 					if (failureType == "password") {
@@ -1535,8 +1276,6 @@ namespace TechInfoSystems.Data.SQLite
 					DateTime windowEnd = windowStart.AddMinutes (PasswordAttemptWindow);
 
 					if (failureCount == 0 || DateTime.UtcNow > windowEnd) {
-						// First password failure or outside of PasswordAttemptWindow. 
-						// Start a new password failure count from 1 and a new window starting now.
 
 						if (failureType == "password")
 							cmd.CommandText = "UPDATE " + USER_TB_NAME
@@ -1560,7 +1299,6 @@ namespace TechInfoSystems.Data.SQLite
 							throw new ProviderException ("Unable to update failure count and window start.");
 					} else {
 						if (failureCount++ >= MaxInvalidPasswordAttempts) {
-							// Password attempts have exceeded the failure threshold. Lock out the user.
 							cmd.CommandText = "UPDATE " + USER_TB_NAME
 								+ "  SET IsLockedOut = '1', LastLockoutDate = $LastLockoutDate, FailedPasswordAttemptCount = $Count "
 								+ "  WHERE LoweredUsername = $Username AND ApplicationId = $ApplicationId";
@@ -1574,8 +1312,6 @@ namespace TechInfoSystems.Data.SQLite
 							if (cmd.ExecuteNonQuery () < 0)
 								throw new ProviderException ("Unable to lock out user.");
 						} else {
-							// Password attempts have not exceeded the failure threshold. Update
-							// the failure counts. Leave the window the same.
 
 							if (failureType == "password")
 								cmd.CommandText = "UPDATE " + USER_TB_NAME
@@ -1605,7 +1341,6 @@ namespace TechInfoSystems.Data.SQLite
 
 		private bool ComparePasswords (string password, string dbpassword, string salt, MembershipPasswordFormat passwordFormat)
 		{
-			//   Compares password values based on the MembershipPasswordFormat.
 			string pass1 = password;
 			string pass2 = dbpassword;
 
@@ -1629,7 +1364,7 @@ namespace TechInfoSystems.Data.SQLite
 
 		private bool CheckPassword (string username, string password, bool failIfNotApproved, out string salt, out MembershipPasswordFormat passwordFormat)
 		{
-			string encodedPwdFromDatabase; // If passwordFormat = "Clear", password is not encoded.
+			string encodedPwdFromDatabase;
 			int status;
 			int failedPwdAttemptCount;
 			int failedPwdAnswerAttemptCount;
@@ -1654,22 +1389,6 @@ namespace TechInfoSystems.Data.SQLite
 			return isAuthenticated;
 		}
 
-		/// <summary>
-		/// Gets several pieces of information for a user from the database.
-		/// </summary>
-		/// <param name="username">The username to search for.</param>
-		/// <param name="status">The return status of the method. Possible values are: 0 = User is found and not locked; 
-		/// 1 = User not found; 99 = User is locked. These values match the return values of the corresponding method in 
-		/// SqlMembershipProvider, so don't blame me for this goofy implementation.</param>
-		/// <param name="password">The password as stored in the database. If it is stored encrypted, the encrypted value
-		/// is returned. The calling method is responsible for decrypting it.</param>
-		/// <param name="passwordFormat">The password format as stored in the database. Possible values: Clear, Hashed, Encrypted.</param>
-		/// <param name="passwordSalt">The password salt as stored in the database.</param>
-		/// <param name="failedPasswordAttemptCount">The failed password attempt count as stored in the database.</param>
-		/// <param name="failedPasswordAnswerAttemptCount">The failed password answer attempt count as stored in the database.</param>
-		/// <param name="isApproved">if set to <c>true</c> the user is approved (not locked out).</param>
-		/// <param name="lastLoginDate">The last login date.</param>
-		/// <param name="lastActivityDate">The last activity date.</param>
 		private static void GetPasswordWithFormat (string username, out int status, out string password, out MembershipPasswordFormat passwordFormat, out string passwordSalt, out int failedPasswordAttemptCount, out int failedPasswordAnswerAttemptCount, out bool isApproved, out DateTime lastLoginDate, out DateTime lastActivityDate)
 		{
 			SqliteConnection cn = GetDBConnectionForMembership ();
@@ -1695,11 +1414,11 @@ namespace TechInfoSystems.Data.SQLite
 							failedPasswordAttemptCount = dr.GetInt32 (3);
 							failedPasswordAnswerAttemptCount = dr.GetInt32 (4);
 							isApproved = dr.GetBoolean (5);
-							status = dr.GetBoolean (6) ? 99 : 0; // 99 = User is locked; 0 = User is found & not locked
+							status = dr.GetBoolean (6) ? 99 : 0;
 							lastLoginDate = dr.GetDateTime (7);
 							lastActivityDate = dr.GetDateTime (8);
 						} else {
-							status = 1; // User not found
+							status = 1;
 							password = null;
 							passwordFormat = MembershipPasswordFormat.Clear;
 							passwordSalt = null;
@@ -1719,7 +1438,6 @@ namespace TechInfoSystems.Data.SQLite
 
 		private string EncodePassword (string password, MembershipPasswordFormat passwordFormat, string salt)
 		{
-			//   Encrypts, Hashes, or leaves the password clear based on the PasswordFormat.
 			if (String.IsNullOrEmpty (password))
 				return password;
 
@@ -1754,7 +1472,6 @@ namespace TechInfoSystems.Data.SQLite
 
 		private string UnEncodePassword (string encodedPassword, MembershipPasswordFormat passwordFormat)
 		{
-			//   Decrypts or leaves the password clear based on the PasswordFormat.
 			string password = encodedPassword;
 
 			switch (passwordFormat) {
@@ -1779,8 +1496,6 @@ namespace TechInfoSystems.Data.SQLite
 
 		private static byte[] HexToByte (string hexString)
 		{
-			//   Converts a hexadecimal string to a byte array. Used to convert encryption
-			// key values from the configuration.
 			byte[] returnBytes = new byte[hexString.Length / 2];
 			for (int i = 0; i < returnBytes.Length; i++)
 				returnBytes [i] = Convert.ToByte (hexString.Substring (i * 2, 2), 16);
@@ -1845,21 +1560,9 @@ namespace TechInfoSystems.Data.SQLite
 			return exceptionText;
 		}
 
-		/// <summary>
-		/// Get a reference to the database connection used for membership. If a transaction is currently in progress, and the
-		/// connection string of the transaction connection is the same as the connection string for the membership provider,
-		/// then the connection associated with the transaction is returned, and it will already be open. If no transaction is in progress,
-		/// a new <see cref="SqliteConnection"/> is created and returned. It will be closed and must be opened by the caller
-		/// before using.
-		/// </summary>
-		/// <returns>A <see cref="SqliteConnection"/> object.</returns>
-		/// <remarks>The transaction is stored in <see cref="System.Web.HttpContext.Current"/>. That means transaction support is limited
-		/// to web applications. For other types of applications, there is no transaction support unless this code is modified.</remarks>
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1024:UsePropertiesWhereAppropriate")]
 		private static SqliteConnection GetDBConnectionForMembership ()
 		{
-			// Look in the HTTP context bag for a previously created connection and transaction. Return if found and its connection
-			// string matches that of the Membership connection string; otherwise return a fresh connection.
 			if (System.Web.HttpContext.Current != null) {
 				SqliteTransaction tran = (SqliteTransaction)System.Web.HttpContext.Current.Items [_httpTransactionId];
 				if ((tran != null) && (String.Equals (tran.Connection.ConnectionString, _connectionString)))
@@ -1869,20 +1572,6 @@ namespace TechInfoSystems.Data.SQLite
 			return new SqliteConnection (_connectionString);
 		}
 
-		/// <summary>
-		/// Determines whether a database transaction is in progress for the Membership provider.
-		/// </summary>
-		/// <returns>
-		/// 	<c>true</c> if a database transaction is in progress; otherwise, <c>false</c>.
-		/// </returns>
-		/// <remarks>A transaction is considered in progress if an instance of <see cref="SqliteTransaction"/> is found in the
-		/// <see cref="System.Web.HttpContext.Current"/> Items property and its connection string is equal to the Membership 
-		/// provider's connection string. Note that this implementation of <see cref="SQLiteMembershipProvider"/> never adds a 
-		/// <see cref="SqliteTransaction"/> to <see cref="System.Web.HttpContext.Current"/>, but it is possible that 
-		/// another data provider in this application does. This may be because other data is also stored in this SQLite database,
-		/// and the application author wants to provide transaction support across the individual providers. If an instance of
-		/// <see cref="System.Web.HttpContext.Current"/> does not exist (for example, if the calling application is not a web application),
-		/// this method always returns false.</remarks>
 		private static bool IsTransactionInProgress ()
 		{
 			if (System.Web.HttpContext.Current == null)
@@ -1899,23 +1588,8 @@ namespace TechInfoSystems.Data.SQLite
 		#endregion
 	}
 
-	/// <summary>
-	/// Provides general purpose validation functionality.
-	/// </summary>
 	internal class SecUtility
 	{
-		/// <summary>
-		/// Checks the parameter and throws an exception if one or more rules are violated.
-		/// </summary>
-		/// <param name="param">The parameter to check.</param>
-		/// <param name="checkForNull">When <c>true</c>, verify <paramref name="param"/> is not null.</param>
-		/// <param name="checkIfEmpty">When <c>true</c> verify <paramref name="param"/> is not an empty string.</param>
-		/// <param name="checkForCommas">When <c>true</c> verify <paramref name="param"/> does not contain a comma.</param>
-		/// <param name="maxSize">The maximum allowed length of <paramref name="param"/>.</param>
-		/// <param name="paramName">Name of the parameter to check. This is passed to the exception if one is thrown.</param>
-		/// <exception cref="ArgumentNullException">Thrown when <paramref name="param"/> is null and <paramref name="checkForNull"/> is true.</exception>
-		/// <exception cref="ArgumentException">Thrown if <paramref name="param"/> does not satisfy one of the remaining requirements.</exception>
-		/// <remarks>This method performs the same implementation as Microsoft's version at System.Web.Util.SecUtility.</remarks>
 		internal static void CheckParameter (ref string param, bool checkForNull, bool checkIfEmpty, bool checkForCommas, int maxSize, string paramName)
 		{
 			if (param == null) {
@@ -1936,15 +1610,6 @@ namespace TechInfoSystems.Data.SQLite
 			}
 		}
 
-		/// <summary>
-		/// Verifies that <paramref name="param"/> conforms to all requirements.
-		/// </summary>
-		/// <param name="param">The parameter to check.</param>
-		/// <param name="checkForNull">When <c>true</c>, verify <paramref name="param"/> is not null.</param>
-		/// <param name="checkIfEmpty">When <c>true</c> verify <paramref name="param"/> is not an empty string.</param>
-		/// <param name="checkForCommas">When <c>true</c> verify <paramref name="param"/> does not contain a comma.</param>
-		/// <param name="maxSize">The maximum allowed length of <paramref name="param"/>.</param>
-		/// <returns>Returns <c>true</c> if all requirements are met; otherwise returns <c>false</c>.</returns>
 		internal static bool ValidateParameter (ref string param, bool checkForNull, bool checkIfEmpty, bool checkForCommas, int maxSize)
 		{
 			if (param == null) {

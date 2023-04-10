@@ -41,7 +41,6 @@ namespace OWASP.WebGoat.NET
                    
             HttpCookie cookie = new HttpCookie("encr_sec_qu_ans");
 
-            //encode twice for more security!
 
             cookie.Value = Encoder.Encode(Encoder.Encode(result[1]));
 
@@ -52,10 +51,8 @@ namespace OWASP.WebGoat.NET
         {
             try
             {
-                //get the security question answer from the cookie
                 string encrypted_password = Request.Cookies["encr_sec_qu_ans"].Value.ToString();
                 
-                //decode it (twice for extra security!)
                 string security_answer = Encoder.Decode(Encoder.Decode(encrypted_password));
                 
                 if (security_answer.Trim().ToLower().Equals(txtAnswer.Text.Trim().ToLower()))

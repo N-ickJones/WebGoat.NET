@@ -29,10 +29,8 @@ namespace OWASP.WebGoat.NET
 
 
 
-            //Headers
             lblHeaders.Text = Request.Headers.ToString().Replace("&", "<br />");
 
-            //Cookies
             ArrayList colCookies = new ArrayList();
             for (int i = 0; i < Request.Cookies.Count; i++)
                 colCookies.Add(Request.Cookies[i]);
@@ -40,7 +38,6 @@ namespace OWASP.WebGoat.NET
             gvCookies.DataSource = colCookies;
             gvCookies.DataBind();
 
-            //possibly going to be used later for something interesting
 
         }
     }

@@ -47,7 +47,6 @@ namespace OWASP.WebGoat.NET
         {
             ConfigFile configFile = Settings.CurrentConfigFile;
 
-            //TODO: Need to provide interface for saving multiple configs need VS for it.
             UpdateConfigFile(configFile);
 
             Settings.CurrentDbProvider = DbProviderFactory.Create(configFile);

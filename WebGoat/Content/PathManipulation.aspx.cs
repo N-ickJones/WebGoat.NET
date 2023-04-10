@@ -12,8 +12,6 @@ namespace OWASP.WebGoat.NET
     {
         protected void Page_Load(object sender, EventArgs e)
         {	
-			//if(Request.QueryString["filename"] == null)
-        	//{
 				DirectoryInfo di = new DirectoryInfo(Server.MapPath("~/Downloads"));
 	        	int i = 0;
 	        	
@@ -27,9 +25,6 @@ namespace OWASP.WebGoat.NET
 	            	cph.Controls.Add(HL);
 	            	cph.Controls.Add(new LiteralControl("<br/>"));
 	        	}
-        	//}
-        	//else
-        	//{
         		string filename = Request.QueryString["filename"];
         		if(filename != null)
         		{
@@ -43,7 +38,6 @@ namespace OWASP.WebGoat.NET
                         lblStatus.Text = "File not found: " + filename;   
                     }
                 }
-        	//}
         }
         
         public static bool ResponseFile(HttpRequest _Request, HttpResponse _Response, string _fileName, string _fullPath, long _speed)
@@ -60,7 +54,7 @@ namespace OWASP.WebGoat.NET
 	                long fileLength = myFile.Length;
 	                long startBytes = 0;
 			
-	                int pack = 10240; //10K bytes
+	                int pack = 10240;
 	                if (_Request.Headers["Range"] != null)
 	                {
 	                    _Response.StatusCode = 206;

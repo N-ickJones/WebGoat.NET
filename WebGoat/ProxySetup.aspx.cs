@@ -20,7 +20,6 @@ namespace OWASP.WebGoat.NET
         
         private string reverse(string s)
         {
-            //char[] charArray = s.ToCharArray();
             var charArray = s.ToCharArray();
             Array.Reverse(charArray);
             return new String(charArray);

@@ -34,24 +34,6 @@ namespace OWASP.WebGoat.NET.WebGoatCoins
             }
             
 
-            /*
-            foreach(DataRow row in ds.Tables["products"].Rows)
-            {
-                lblOutput.Text += row[1] + "<br/>";
-                lblOutput.Text += "<img src='./images/products/" + row[3] + "'/><br/>";
-
-            }
-            */
-            /*
-                foreach (DataRow custRow in customerOrders.Tables["Customers"].Rows)
-                {
-                    Console.WriteLine(custRow["CustomerID"].ToString());
-                    foreach (DataRow orderRow in custRow.GetChildRows(customerOrdersRelation))
-                    {
-                        Console.WriteLine(orderRow["OrderID"].ToString());
-                    }
-                }
-            */
         }
     }
 }
